@@ -117,3 +117,4 @@ __pycache__
 
 checkpoints/
 data_src/
+pointnerf/dpf_demo_data/

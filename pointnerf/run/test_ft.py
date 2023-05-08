@@ -257,7 +257,7 @@ def test(model, dataset, visualizer, opt, bg_info, test_steps=0, gen_vid=True, l
     visualizer.print_losses(count)
     psnr = visualizer.get_psnr(opt.test_color_loss_items[0])
     print('--------------------------------Finish Test Rendering--------------------------------')
-    report_metrics(visualizer.image_dir, visualizer.image_dir, visualizer.image_dir, ["psnr", "ssim", "lpips", "vgglpips", "rmse"] if lpips else ["psnr", "ssim", "rmse"], [i for i in range(0, total_num, opt.test_num_step)], imgStr="step-%04d-{}.png".format(opt.visual_items[0]),gtStr="step-%04d-{}.png".format(opt.visual_items[1]))
+    report_metrics(visualizer.image_dir, visualizer.image_dir, visualizer.image_dir, ["psnr", "lpips", "vgglpips", "rmse"] if lpips else ["psnr", "ssim", "rmse"], [i for i in range(0, total_num, opt.test_num_step)], imgStr="step-%04d-{}.png".format(opt.visual_items[0]),gtStr="step-%04d-{}.png".format(opt.visual_items[1]))
     print('--------------------------------Finish Evaluation--------------------------------')
     if gen_vid:
         del dataset
