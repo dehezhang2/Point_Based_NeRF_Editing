@@ -149,8 +149,6 @@ def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen
     visualizer.reset()
     count = 0
     for i in range(0, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
-        if i < 91:
-            continue
         # deform points
         keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
         # target keypoint
