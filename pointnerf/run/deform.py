@@ -137,6 +137,7 @@ def render_vid(model, dataset, visualizer, opt, bg_info, steps=0, gen_vid=True):
 
 def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen_vid=True, lpips=True):
     print('-----------------------------------Testing-----------------------------------')
+    print('device: ', device)
     model.eval()
     total_num = dataset.total
     print("test set size {}, interval {}".format(total_num, opt.test_num_step)) # 1 if test_steps == 10000 else opt.test_num_step
@@ -146,8 +147,10 @@ def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen
     height = dataset.height
     width = dataset.width
     visualizer.reset()
-    count = 0;
+    count = 0
     for i in range(0, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
+        if i < 91:
+            continue
         # deform points
         keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
         # target keypoint
@@ -157,7 +160,6 @@ def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen
         with torch.no_grad():
             model.neural_points.xyz = torch.nn.Parameter(xpred)
             # model.neural_points.points_color = nn.Parameter(saved_features["neural_points.points_color"])
-            print("here")
             data = dataset.get_item(i)
             raydir = data['raydir'].clone()
             pixel_idx = data['pixel_idx'].view(data['pixel_idx'].shape[0], -1, data['pixel_idx'].shape[3]).clone()
@@ -169,7 +171,7 @@ def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen
             tmpgts = {}
             tmpgts["gt_image"] = data['gt_image'].clone()
             tmpgts["gt_mask"] = data['gt_mask'].clone() if "gt_mask" in data else None
-            print("data['gt_image']")
+            # print("data['gt_image']")
             # data.pop('gt_image', None)
             data.pop('gt_mask', None)
 
