@@ -82,7 +82,7 @@ class NeuralPointsVolumetricModel(BaseRenderingModel):
             opt.visual_items.append('fine_raycolor')
 
     def run_network_models(self):
-        return self.fill_invalid(self.net_ray_marching(**self.input), self.input)
+        return self.fill_invalid(self.net_ray_marching(**self.input,  raybender=self.raybender), self.input)
 
     def fill_invalid(self, output, input):
         # ray_mask:             torch.Size([1, 1024])
@@ -158,7 +158,7 @@ class NeuralPointsVolumetricModel(BaseRenderingModel):
         # network
         self.net_ray_marching = NeuralPointsRayMarching(
             **params, **self.found_funcs)
-
+        # self.net_ray_marching.set_raybender(self.raybender)
         self.model_names = ['ray_marching'] if getattr(self, "model_names", None) is None else self.model_names + ['ray_marching']
 
         # parallel
@@ -219,6 +219,9 @@ class NeuralPointsVolumetricModel(BaseRenderingModel):
     def update_rank_ray_miss(self, total_steps):
         raise NotImplementedError
 
+    def set_raybender(self, raybender):
+        self.raybender = raybender
+
 class NeuralPointsRayMarching(nn.Module):
     def __init__(self,
              tonemap_func=None,
@@ -262,11 +265,13 @@ class NeuralPointsRayMarching(nn.Module):
                 h=None,
                 w=None,
                 intrinsic=None,
+                raybender=None,
                 **kargs):
         output = {}
         # B, channel, 292, 24, 32;      B, 3, 294, 24, 32;     B, 294, 24;     B, 291, 2
         sampled_color, sampled_Rw2c, sampled_dir, sampled_conf, sampled_embedding, sampled_xyz_pers, sampled_xyz, sample_pnt_mask, sample_loc, sample_loc_w, sample_ray_dirs, ray_mask_tensor, vsize, grid_vox_sz = self.neural_points({"pixel_idx": pixel_idx, "camrotc2w": camrotc2w, "campos": campos, "near": near, "far": far,"focal": focal, "h": h, "w": w, "intrinsic": intrinsic,"gt_image":gt_image, "raydir":raydir})
-
+        if(sample_loc.shape[1]!=0):
+            sample_ray_dirs = raybender.bend_rays(sample_loc, sample_ray_dirs)
         decoded_features, ray_valid, weight, conf_coefficient = self.aggregator(sampled_color, sampled_Rw2c, sampled_dir, sampled_conf, sampled_embedding, sampled_xyz_pers, sampled_xyz, sample_pnt_mask, sample_loc, sample_loc_w, sample_ray_dirs, vsize, grid_vox_sz)
         ray_dist = torch.cummax(sample_loc[..., 2], dim=-1)[0]
         ray_dist = torch.cat([ray_dist[..., 1:] - ray_dist[..., :-1], torch.full((ray_dist.shape[0], ray_dist.shape[1], 1), vsize[2], device=ray_dist.device)], dim=-1)

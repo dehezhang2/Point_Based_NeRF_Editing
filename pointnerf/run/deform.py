@@ -12,7 +12,7 @@ from data import create_data_loader, create_dataset
 from models import create_model
 from models.mvs.mvs_points_model import MvsPointsModel
 from models.mvs import mvs_utils, filter_utils
-from models.dynamic_point_field.model import deform_cloud, Siren
+from models.dynamic_point_field.model import deform_cloud, Siren, RayBender
 from pprint import pprint
 from utils.visualizer import Visualizer
 from utils import format as fmt
@@ -151,10 +151,11 @@ def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen
     for i in range(0, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
         # deform points
         keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
+        model.raybender.set_trg(f"{keypoint_dir}/{i}.obj")
         # target keypoint
         vtrg = pcu.load_mesh_v(f"{keypoint_dir}/{i}.obj")
         xpred = deform(xsrc, vsrc, vtrg)
-
+        # breakpoint()
         with torch.no_grad():
             model.neural_points.xyz = torch.nn.Parameter(xpred)
             # model.neural_points.points_color = nn.Parameter(saved_features["neural_points.points_color"])
@@ -303,7 +304,7 @@ def main():
             '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' +
             fmt.END)
     # initialize deformation
-    xsrc, vsrc, vrgb = init_deformation(opt)
+    xsrc, vsrc, vrgb, raybender = init_deformation(opt)
     visualizer = Visualizer(opt)
     train_dataset = create_dataset(opt)
     img_lst=None
@@ -333,6 +334,8 @@ def main():
 
     model = create_model(opt)
     model.setup(opt, train_len=len(train_dataset))
+    # breakpoint()
+    model.set_raybender(raybender)
     # create test loader
     test_opt = copy.deepcopy(opt)
     test_opt.is_train = False
@@ -369,6 +372,7 @@ def init_deformation(opt, vsrc_idx=67):
     saved_features = torch.load(opt.checkpoints_dir + opt.name + "/" + str(opt.resume_iter) + "_net_ray_marching.pth", map_location=device)
     keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
     point_cloud = saved_features["neural_points.xyz"].cpu().numpy()
+    raybender = RayBender(f"{keypoint_dir}/{vsrc_idx}.obj",k=8)
     # source point cloud & keypoint
     vsrc = pcu.load_mesh_v(f"{keypoint_dir}/{vsrc_idx}.obj")
     xsrc, csrc = point_cloud[:, :3], point_cloud[:, 3:]
@@ -383,7 +387,7 @@ def init_deformation(opt, vsrc_idx=67):
     vrgb = torch.zeros([len(vsrc), 4]).to(device)
     vrgb[:, 1] = 1
     vrgb[:, 3] = 1
-    return xsrc, vsrc, vrgb
+    return xsrc, vsrc, vrgb, raybender
 
 def deform(xsrc, vsrc, vtrg):
     # to tensor
