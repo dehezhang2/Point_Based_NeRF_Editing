@@ -6,10 +6,11 @@ from tqdm import tqdm
 from pytorch3d.ops.knn import knn_points
 from pytorch3d.loss.chamfer import chamfer_distance
 from pytorch3d.transforms import matrix_to_quaternion, quaternion_to_matrix
-from torch.nn.functional import l1_loss
+from torch.nn.functional import l1_loss, softmax
 from collections import OrderedDict
 import open3d as o3d
 from sklearn.neighbors import NearestNeighbors
+import point_cloud_utils as pcu
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -114,49 +115,41 @@ class Siren(nn.Module):
         return activations
 
 class RayBender:
-    def __init__(self, src_dir, k=8):
-        self.src_tri_mesh = o3d.io.read_triangle_mesh(src_dir)
-        self.src_tri_mesh.compute_adjacency_list()
-        self.src_adj = self.src_tri_mesh.adjacency_list
-        self.vsrc, self.fsrc = np.asarray(self.src_tri_mesh.vertices), np.asarray(self.src_tri_mesh.triangles)
-        self.k = 8
-    def set_trg(self, trg_dir):
+    def __init__(self, xsrc, k=8):
+        self.xsrc = xsrc.cpu().numpy()
+        self.k = k
+        
+    def set_trg(self, xtrg):
         # compute the rotation matrix for each vertex
-        trg_tri_mesh = o3d.io.read_triangle_mesh(trg_dir)
-        vtrg = np.asarray(trg_tri_mesh.vertices)
-        trg_tri_mesh.compute_adjacency_list()
-        trg_adj = trg_tri_mesh.adjacency_list
+        self.xtrg = xtrg.cpu().numpy()
+        self.kd_tree_trg = NearestNeighbors(n_neighbors=self.k, algorithm='kd_tree').fit(self.xtrg)
         self.rotation_per_vertex = []
         print("===setting up the KD tree===")
-        for i in tqdm(range(min(len(self.src_adj), len(trg_adj)))):
-            joint_adj = self.src_adj[i].union(trg_adj[i])
-            joint_adj = np.asarray(list(joint_adj))
-            joint_adj_mask = np.logical_and(joint_adj < self.vsrc.shape[0] , joint_adj < vtrg.shape[0])
-            joint_adj= joint_adj[joint_adj_mask]
+        for i in tqdm(range(self.xsrc.shape[0])):
+            _, indice_trg = self.kd_tree_trg.kneighbors(self.xtrg[i:i+1])
 
-            X = self.vsrc[joint_adj]
-            X = X - self.vsrc[i]
-
-            Y = vtrg[joint_adj]
-            Y = Y - vtrg[i]
+            X = self.xsrc[indice_trg[0]]            
+            X = X - self.xsrc[i]
+            Y = self.xtrg[indice_trg[0]]
+            Y = Y - self.xtrg[i]
+            # breakpoint()
             u, _, vh = np.linalg.svd(X.T @ Y)
             # right multiply R => X R = Y
             R = u @ vh
             self.rotation_per_vertex.append(R)
         self.rotation_per_vertex = np.array(self.rotation_per_vertex)
-        self.kd_tree = NearestNeighbors(n_neighbors=self.k, algorithm='kd_tree').fit(vtrg)
     
     def query(self, query_points):
         #input: query_points: B, R, SR, 3
         #output: rotations: B, R, SR, 3, 3
         q_shape = query_points.shape
         query_points = query_points.view(-1, 3).cpu().numpy()
-        distances, indices = self.kd_tree.kneighbors(query_points)
+        distances, indices = self.kd_tree_trg.kneighbors(query_points)
         # N * K
         distances = torch.Tensor(distances).to(device=device)
         # N * K * 4
         rotations = matrix_to_quaternion(torch.Tensor(self.rotation_per_vertex[indices]).to(device=device))
-        weight = 1. / torch.clamp(distances, min= 1e-6)
+        weight = 1. / torch.clamp(distances, min= 1e-8)
         weight = weight / torch.clamp(torch.sum(weight, dim=-1, keepdim=True), min=1e-8)
         rotation_Nlerp = torch.einsum('nkd,nk->nd', rotations, weight)
         rotation_Nlerp = rotation_Nlerp / rotation_Nlerp.norm(dim=-1)[:, None]

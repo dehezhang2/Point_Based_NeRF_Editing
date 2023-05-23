@@ -727,4 +727,4 @@ class NeuralPoints(nn.Module):
         # if self.points_embeding.grad is not None:
         #     print("points_embeding grad:", self.points_embeding.requires_grad, torch.max(self.points_embeding.grad))
         # print("points_embeding 3", torch.max(self.points_embeding), torch.min(self.points_embeding))
-        return sampled_color, sampled_Rw2c, sampled_dir, sampled_conf, sampled_embedding[..., 6:], sampled_embedding[..., 3:6], sampled_embedding[..., :3], sample_pnt_mask, sample_loc, sample_loc_w_tensor, sample_ray_dirs_tensor, ray_mask_tensor, vsize, self.grid_vox_sz
+        return sample_pidx.view(B, R, SR, K), sampled_color, sampled_Rw2c, sampled_dir, sampled_conf, sampled_embedding[..., 6:], sampled_embedding[..., 3:6], sampled_embedding[..., :3], sample_pnt_mask, sample_loc, sample_loc_w_tensor, sample_ray_dirs_tensor, ray_mask_tensor, vsize, self.grid_vox_sz
