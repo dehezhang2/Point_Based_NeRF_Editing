@@ -1,6 +1,13 @@
 # Digital_Human_NeRF_Editing
-This is a repository containing the code of the course project of digital human. Our topic is NeRF editing based on point deformation
+This is a repository containing the code of the course project of digital human. Our topic is NeRF editing based on point deformation.
 
+## Install Environment
+### requirement: (on autodl) 
+- Mirror: Python 3.8 (ubuntu20.04) Cuda 11.8
+- Install environment
+    ```
+    bash requirement.sh
+    ```
 
 ## Run Deformation
 

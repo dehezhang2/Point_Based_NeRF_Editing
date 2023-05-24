@@ -305,7 +305,7 @@ def main():
             fmt.END)
     # initialize deformation
     xsrc, vsrc, vrgb = init_deformation(opt)
-    raybender = RayBender(xsrc, 8)
+    raybender = RayBender(xsrc, 1000)
     visualizer = Visualizer(opt)
     train_dataset = create_dataset(opt)
     img_lst=None
