@@ -145,7 +145,7 @@ class RayBender:
         q_shape = query_points.shape
         query_points = query_points.view(-1, 3).cpu().numpy()
         distances, indices = self.kd_tree_trg.kneighbors(query_points)
-        breakpoint()
+        # breakpoint()
         # N * K
         distances = torch.Tensor(distances).to(device=device)
         # N * K * 4

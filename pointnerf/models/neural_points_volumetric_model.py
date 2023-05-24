@@ -82,7 +82,8 @@ class NeuralPointsVolumetricModel(BaseRenderingModel):
             opt.visual_items.append('fine_raycolor')
 
     def run_network_models(self):
-        return self.fill_invalid(self.net_ray_marching(**self.input,  raybender=self.raybender), self.input)
+        # return self.fill_invalid(self.net_ray_marching(**self.input,  raybender=self.raybender), self.input)
+        return self.fill_invalid(self.net_ray_marching(**self.input,  raybender=None), self.input)
 
     def fill_invalid(self, output, input):
         # ray_mask:             torch.Size([1, 1024])

@@ -368,7 +368,9 @@ def main():
     model.opt.no_loss = 1
     test(xsrc, vsrc, model, test_dataset, Visualizer(test_opt), test_opt, test_bg_info, test_steps=resume_iter)
 
-def init_deformation(opt, vsrc_idx=67):
+def init_deformation(opt):
+    # get vsrc_idx
+    vsrc_idx = int(np.loadtxt(os.path.join(opt.data_root, opt.scan, "src_id.txt")))
     # load static NeRF pointcloud
     saved_features = torch.load(opt.checkpoints_dir + opt.name + "/" + str(opt.resume_iter) + "_net_ray_marching.pth", map_location=device)
     keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
