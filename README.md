@@ -4,11 +4,15 @@ This is a repository containing the code of the course project of digital human.
 ## Install Environment
 ### requirement: (on autodl) 
 - Mirror: Python 3.8 (ubuntu20.04) Cuda 11.8
-- Install environment
+- Install point-NeRF environment
     ```
-    bash requirement.sh
+    conda env create -f environment_autodl.yml
     ```
-
+- Install pytorch3d
+    ```
+    pip install fvcore iopath
+    pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu117_pyt1131/download.html
+    ```
 ## Run Deformation
 
 ### Generate static point cloud
