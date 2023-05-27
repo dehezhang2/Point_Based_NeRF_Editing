@@ -119,5 +119,9 @@ class TrainOptions(BaseOptions):
                             type=str,
                             default=None,
                             help='cartisian distance for prob')
+        parser.add_argument('--ray_bend',
+                            type=int,
+                            default=0,
+                            help='activate ray bending at deformation')
 
         return parser

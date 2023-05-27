@@ -148,8 +148,7 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
     width = dataset.width
     visualizer.reset()
     count = 0
-    for i in range(1, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
-        print(f"=== Deform image {i} ===")
+    for i in range(0, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
         # deform points
         keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
         # target keypoint
@@ -158,7 +157,12 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
             # sample keypoint
             vtrg = vtrg[kp_idxs]
         xpred = deform(xsrc, vsrc, vtrg)
-        model.raybender.set_trg(xpred)
+        if opt.ray_bend == 1:
+            model.raybender.set_trg(xpred)
+        
+        # print
+        print(fmt.RED + f'Deform image {i}, Total keypoint {vtrg.shape[0]}, Total pointcloud {xsrc.shape[0]}' + fmt.END)
+
         # breakpoint()
         with torch.no_grad():
             model.neural_points.xyz = torch.nn.Parameter(xpred)
@@ -340,6 +344,9 @@ def main():
     model = create_model(opt)
     model.setup(opt, train_len=len(train_dataset))
     # breakpoint()
+    if opt.ray_bend == 0:
+        raybender = None
+        print('--------------------------No Bending!------------------------------------')
     model.set_raybender(raybender)
     # create test loader
     test_opt = copy.deepcopy(opt)
@@ -372,7 +379,7 @@ def main():
     model.opt.no_loss = 1
     test(xsrc, vsrc, kp_idxs, model, test_dataset, Visualizer(test_opt), test_opt, test_bg_info, test_steps=resume_iter)
 
-def sample_kp(kp, num=1000):    # num: sample number or ratio
+def sample_kp(kp, num=None):    # num: sample number or ratio
     if num is not None:
         if num > 1:
             kp_idxs = np.random.choice(kp.shape[0], num).tolist()
@@ -386,7 +393,7 @@ def sample_kp(kp, num=1000):    # num: sample number or ratio
     return kp_idxs
 
 
-def init_deformation(opt, sample_num=1000):
+def init_deformation(opt, sample_num=None):
     # get vsrc_idx
     vsrc_idx = int(np.loadtxt(os.path.join(opt.data_root, opt.scan, "src_id.txt")))
     # load static NeRF pointcloud
@@ -407,7 +414,7 @@ def init_deformation(opt, sample_num=1000):
     # to tensor
     xsrc = torch.Tensor(xsrc).to(device)
     csrc = torch.Tensor(csrc / 255).to(device)
-    vsrc = torch.Tensor(vsrc).to(device)[48:]
+    vsrc = torch.Tensor(vsrc).to(device)
     # coordinate transform
     xsrc_x, xsrc_y, xsrc_z = xsrc[:, 0], xsrc[:, 1], xsrc[:, 2]
     xsrc = torch.stack([xsrc_x, xsrc_z, -xsrc_y], dim=-1)
@@ -419,7 +426,7 @@ def init_deformation(opt, sample_num=1000):
 
 def deform(xsrc, vsrc, vtrg):
     # to tensor
-    vtrg = torch.Tensor(vtrg).to(device)[48:]
+    vtrg = torch.Tensor(vtrg).to(device)
     # xtrg = torch.Tensor(xtrg).to(device)
     # ctrg = torch.Tensor(ctrg / 255).to(device)
 
@@ -478,7 +485,7 @@ def deform(xsrc, vsrc, vtrg):
 #         # target keypoint
 #         vtrg = pcu.load_mesh_v(target)
 #         # to tensor
-#         vtrg = torch.Tensor(vtrg).to(device)[48:]
+#         vtrg = torch.Tensor(vtrg).to(device)
 #         # xtrg = torch.Tensor(xtrg).to(device)
 #         # ctrg = torch.Tensor(ctrg / 255).to(device)
 #

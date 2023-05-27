@@ -140,8 +140,8 @@ dependencies:
     - fonttools
     - fvcore
     - h5py
-    - imageio
-    - imageio-ffmpeg
+    - imageio==2.27.0
+    - imageio-ffmpeg==0.4.7
     - importlib-metadata
     - importlib-resources
     - inplace-abn
