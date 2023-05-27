@@ -135,7 +135,7 @@ def render_vid(model, dataset, visualizer, opt, bg_info, steps=0, gen_vid=True):
 
 
 
-def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen_vid=True, lpips=True):
+def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_steps=0, gen_vid=True, lpips=True):
     print('-----------------------------------Testing-----------------------------------')
     print('device: ', device)
     model.eval()
@@ -148,11 +148,15 @@ def test(xsrc, vsrc, model, dataset, visualizer, opt, bg_info, test_steps=0, gen
     width = dataset.width
     visualizer.reset()
     count = 0
-    for i in range(0, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
+    for i in range(1, total_num, opt.test_num_step): # 1 if test_steps == 10000 else opt.test_num_step
+        print(f"=== Deform image {i} ===")
         # deform points
         keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
         # target keypoint
         vtrg = pcu.load_mesh_v(f"{keypoint_dir}/{i}.obj")
+        if kp_idxs is not None:
+            # sample keypoint
+            vtrg = vtrg[kp_idxs]
         xpred = deform(xsrc, vsrc, vtrg)
         model.raybender.set_trg(xpred)
         # breakpoint()
@@ -304,8 +308,8 @@ def main():
             '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' +
             fmt.END)
     # initialize deformation
-    xsrc, vsrc, vrgb = init_deformation(opt)
-    raybender = RayBender(xsrc, 1000)
+    xsrc, vsrc, vrgb, kp_idxs = init_deformation(opt)
+    raybender = RayBender(xsrc, 8)
     visualizer = Visualizer(opt)
     train_dataset = create_dataset(opt)
     img_lst=None
@@ -366,9 +370,23 @@ def main():
     test_dataset = create_dataset(test_opt)
     model.opt.is_train = 0
     model.opt.no_loss = 1
-    test(xsrc, vsrc, model, test_dataset, Visualizer(test_opt), test_opt, test_bg_info, test_steps=resume_iter)
+    test(xsrc, vsrc, kp_idxs, model, test_dataset, Visualizer(test_opt), test_opt, test_bg_info, test_steps=resume_iter)
 
-def init_deformation(opt):
+def sample_kp(kp, num=1000):    # num: sample number or ratio
+    if num is not None:
+        if num > 1:
+            kp_idxs = np.random.choice(kp.shape[0], num).tolist()
+        elif num <= 1:
+            kp_idxs = np.random.choice(kp.shape[0], int(kp.shape[0] * ratio)).tolist()
+        else:
+            print("[sample_kp]: not implemented")
+    else:
+        kp_idxs = None
+
+    return kp_idxs
+
+
+def init_deformation(opt, sample_num=1000):
     # get vsrc_idx
     vsrc_idx = int(np.loadtxt(os.path.join(opt.data_root, opt.scan, "src_id.txt")))
     # load static NeRF pointcloud
@@ -377,7 +395,15 @@ def init_deformation(opt):
     point_cloud = saved_features["neural_points.xyz"].cpu().numpy()
     # source point cloud & keypoint
     vsrc = pcu.load_mesh_v(f"{keypoint_dir}/{vsrc_idx}.obj")
+    print(f"vsrc size: {vsrc.shape[0]}")
     xsrc, csrc = point_cloud[:, :3], point_cloud[:, 3:]
+    if sample_num is not None:
+        print(f"sample num: {sample_num}")
+        # sample keypoint
+        kp_idxs = sample_kp(vsrc, sample_num)
+        vsrc = vsrc[kp_idxs]
+    else:
+        kp_idxs = None
     # to tensor
     xsrc = torch.Tensor(xsrc).to(device)
     csrc = torch.Tensor(csrc / 255).to(device)
@@ -389,7 +415,7 @@ def init_deformation(opt):
     vrgb = torch.zeros([len(vsrc), 4]).to(device)
     vrgb[:, 1] = 1
     vrgb[:, 3] = 1
-    return xsrc, vsrc, vrgb
+    return xsrc, vsrc, vrgb, kp_idxs
 
 def deform(xsrc, vsrc, vtrg):
     # to tensor

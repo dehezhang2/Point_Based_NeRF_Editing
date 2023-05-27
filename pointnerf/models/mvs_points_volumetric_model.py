@@ -15,7 +15,7 @@ class MvsPointsVolumetricModel(NeuralPointsVolumetricModel):
 
     def __init__(self,):
         super().__init__()
-        self.optimizer, self.neural_point_optimizer, self.output, self.raygen_func, self.render_func, self.blend_func, self.coarse_raycolor, self.gt_image, self.input, self.l1loss, self.l2loss, self.tonemap_func, self.top_ray_miss_ids, self.top_ray_miss_loss, self.loss_ray_masked_coarse_raycolor, self.loss_ray_miss_coarse_raycolor, self.loss_total, self.loss_coarse_raycolor, self.loss_conf_coefficient = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+        self.raybender, self.optimizer, self.neural_point_optimizer, self.output, self.raygen_func, self.render_func, self.blend_func, self.coarse_raycolor, self.gt_image, self.input, self.l1loss, self.l2loss, self.tonemap_func, self.top_ray_miss_ids, self.top_ray_miss_loss, self.loss_ray_masked_coarse_raycolor, self.loss_ray_miss_coarse_raycolor, self.loss_total, self.loss_coarse_raycolor, self.loss_conf_coefficient = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
     #
     @staticmethod
