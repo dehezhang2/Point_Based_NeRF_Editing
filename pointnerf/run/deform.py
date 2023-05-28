@@ -159,6 +159,9 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
         xpred = deform(xsrc, vsrc, vtrg)
         if opt.ray_bend == 1:
             model.raybender.set_trg(xpred)
+        # coordinate transform
+        xsrc_x, xsrc_y, xsrc_z = xpred[:, 0], xpred[:, 1], xpred[:, 2]
+        xpred = torch.stack([xsrc_x, -xsrc_z, xsrc_y], dim=-1)
         
         # print
         print(fmt.RED + f'Deform image {i}, Total keypoint {vtrg.shape[0]}, Total pointcloud {xsrc.shape[0]}' + fmt.END)
@@ -449,11 +452,6 @@ def deform(xsrc, vsrc, vtrg):
     deform_model.eval()
     xpred = xsrc + deform_model(xsrc).detach().clone()
     xpred = torch.Tensor(xpred).to(device)
-
-    # coordinate transform
-    xsrc_x, xsrc_y, xsrc_z = xpred[:, 0], xpred[:, 1], xpred[:, 2]
-    xpred = torch.stack([xsrc_x, -xsrc_z, xsrc_y], dim=-1)
-
     return xpred
 
 # def main():

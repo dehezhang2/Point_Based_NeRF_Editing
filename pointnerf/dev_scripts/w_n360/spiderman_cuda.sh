@@ -1,23 +1,46 @@
 #!/bin/bash
 nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
-name='hu_cuda'
+name='spiderman_cuda'
 
-resume_iter=190000 # 20000
-
+resume_iter=best #
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
-scan="human"
+scan="spiderman"
 
+load_points=0
+feat_grad=1
+conf_grad=1
+dir_grad=1
+color_grad=1
+vox_res=320
 normview=0
+prune_thresh=0.1
+prune_iter=-10001
+prune_max_iter=200000
+
+feedforward=0
+ref_vid=0
 bgmodel="no" #"plane"
+depth_occ=1
+depth_vid="0"
 trgt_id=0
+manual_depth_view=1
+init_view_num=3
+pre_d_est="${nrCheckpoint}/MVSNet/model_000014.ckpt"
+manual_std_depth=0.0
+depth_conf_thresh=0.8
+geo_cnsst_num=2
+full_comb=1
+appr_feature_str0="imgfeat_0_0123 dir_0 point_conf"
 point_conf_mode="1" # 0 for only at features, 1 for multi at weight
 point_dir_mode="1" # 0 for only at features, 1 for color branch
 point_color_mode="1" # 0 for only at features, 1 for color branch
+default_conf=0.15 #1000
 
 agg_feat_xyz_mode="None"
 agg_alpha_xyz_mode="None"
 agg_color_xyz_mode="None"
+feature_init_method="rand" #"rand" # "zeros"
 agg_axis_weight=" 1. 1. 1."
 agg_dist_pers=20
 radius_limit_scale=4
@@ -31,13 +54,15 @@ vsize=" 0.004 0.004 0.004 " #" 0.005 0.005 0.005 "
 wcoord_query=-1
 z_depth_dim=400
 max_o=410000 #2000000
-ranges=" -0.721 -0.695 -0.995 0.658 0.706 1.050 "
+ranges="-2 -2 -2 2 2 2"
 SR=80
 K=8
 P=12 #120
 NN=2
 
+
 act_type="LeakyReLU"
+
 agg_intrp_order=2
 agg_distance_kernel="linear" #"avg" #"feat_intrp"
 weight_xyz_freq=2
@@ -79,26 +104,67 @@ num_pos_freqs=10
 num_viewdir_freqs=4 #6
 
 random_sample='random'
+
 random_sample_size=60 #94 #48 # 32 * 32 = 1024
+#color_sample_fraction=0.8
+
 batch_size=1
+plr=0.002
+lr=0.0005 # 0.0005 #0.00015
+lr_policy="iter_exponential_decay"
+lr_decay_iters=1000000
+lr_decay_exp=0.1
+#lr_policy="lambda"
+#lr_decay_iters=-1
+
 gpu_ids='0'
 checkpoints_dir="${nrCheckpoint}/nerfsynth/"
 resume_dir="${nrCheckpoint}/init/dtu_dgt_d012_img0123_conf_agg2_32_dirclr20"
 
+save_iter_freq=10000
+save_point_freq=10000 #301840 #1
+maximum_step=200000 #300000 #800000
+
+niter=10000 #1000000
+niter_decay=10000 #250000
 n_threads=1
-test_num_step=1
+train_and_test=0 #1
+test_num=10
+test_freq=10000 #1200 #1200 #30184 #30184 #50000
+print_freq=40
+test_num_step=10
+
+far_thresh=-1 #0.005
+prob_freq=10001 #2000 #10001
+prob_num_step=20
+prob_thresh=0.7
+prob_mul=0.4
+prob_kernel_size=" 3 3 3 "
+prob_tiers=" 80100 "
 
 zero_epsilon=1e-3
+
 visual_items=' coarse_raycolor gt_image '
+zero_one_loss_items='conf_coefficient' #regularize background to be either 0 or 1
+zero_one_loss_weights=" 0.0001 "
+sparse_loss_weight=0
+
 color_loss_weights=" 1.0 0.0 0.0 "
 color_loss_items='ray_masked_coarse_raycolor ray_miss_coarse_raycolor coarse_raycolor'
 test_color_loss_items='coarse_raycolor ray_miss_coarse_raycolor ray_masked_coarse_raycolor'
 
+vid=250000
+
 bg_color="white" #"0.0,0.0,0.0,1.0,1.0,1.0"
+bg_filtering=1
 split="train"
 cd run
 
-python3 deform.py \
+#for i in $(seq 1 $prob_freq $maximum_step)
+#
+#do
+#python3 gen_pnts.py \
+python3 train_ft_nonstop.py \
         --experiment $name \
         --scan $scan \
         --data_root $data_root \
@@ -112,12 +178,25 @@ python3 deform.py \
         --random_sample $random_sample \
         --random_sample_size $random_sample_size \
         --batch_size $batch_size \
+        --maximum_step $maximum_step \
+        --plr $plr \
+        --lr $lr \
+        --lr_policy $lr_policy \
+        --lr_decay_iters $lr_decay_iters \
+        --lr_decay_exp $lr_decay_exp \
         --gpu_ids $gpu_ids \
         --checkpoints_dir $checkpoints_dir \
+        --save_iter_freq $save_iter_freq \
+        --niter $niter \
+        --niter_decay $niter_decay \
         --n_threads $n_threads \
         --pin_data_in_memory $pin_data_in_memory \
+        --train_and_test $train_and_test \
+        --test_num $test_num \
+        --test_freq $test_freq \
         --test_num_step $test_num_step \
         --test_color_loss_items $test_color_loss_items \
+        --print_freq $print_freq \
         --bg_color $bg_color \
         --split $split \
         --which_ray_generation $which_ray_generation \
@@ -125,8 +204,10 @@ python3 deform.py \
         --far_plane $far_plane \
         --dir_norm $dir_norm \
         --which_tonemap_func $which_tonemap_func \
+        --load_points $load_points \
         --resume_dir $resume_dir \
         --resume_iter $resume_iter \
+        --feature_init_method $feature_init_method \
         --agg_axis_weight $agg_axis_weight \
         --agg_distance_kernel $agg_distance_kernel \
         --radius_limit_scale $radius_limit_scale \
@@ -140,6 +221,7 @@ python3 deform.py \
         --agg_feat_xyz_mode $agg_feat_xyz_mode \
         --agg_alpha_xyz_mode $agg_alpha_xyz_mode \
         --agg_color_xyz_mode $agg_color_xyz_mode  \
+        --save_point_freq $save_point_freq  \
         --raydist_mode_unit $raydist_mode_unit  \
         --agg_dist_pers $agg_dist_pers \
         --agg_intrp_order $agg_intrp_order \
@@ -159,18 +241,50 @@ python3 deform.py \
         --apply_pnt_mask $apply_pnt_mask \
         --point_features_dim $point_features_dim \
         --color_loss_items $color_loss_items \
+        --feedforward $feedforward \
         --trgt_id $trgt_id \
+        --depth_vid $depth_vid \
+        --ref_vid $ref_vid \
+        --manual_depth_view $manual_depth_view \
+        --pre_d_est $pre_d_est \
+        --depth_occ $depth_occ \
+        --manual_std_depth $manual_std_depth \
         --visual_items $visual_items \
+        --appr_feature_str0 $appr_feature_str0 \
+        --init_view_num $init_view_num \
+        --feat_grad $feat_grad \
+        --conf_grad $conf_grad \
+        --dir_grad $dir_grad \
+        --color_grad $color_grad \
+        --depth_conf_thresh $depth_conf_thresh \
         --bgmodel $bgmodel \
+        --vox_res $vox_res \
         --act_type $act_type \
+        --geo_cnsst_num $geo_cnsst_num \
         --point_conf_mode $point_conf_mode \
         --point_dir_mode $point_dir_mode \
         --point_color_mode $point_color_mode \
         --normview $normview \
+        --prune_thresh $prune_thresh \
+        --prune_iter $prune_iter \
+        --full_comb $full_comb \
+        --sparse_loss_weight $sparse_loss_weight \
+        --default_conf $default_conf \
+        --prob_freq $prob_freq \
+        --prob_num_step $prob_num_step \
+        --prob_thresh $prob_thresh \
+        --prob_mul $prob_mul \
+        --prob_kernel_size $prob_kernel_size \
+        --prob_tiers $prob_tiers \
         --alpha_range $alpha_range \
         --ranges $ranges \
+        --vid $vid \
         --vsize $vsize \
         --wcoord_query $wcoord_query \
         --max_o $max_o \
-        --debug
-
+        --zero_one_loss_items $zero_one_loss_items \
+        --zero_one_loss_weights $zero_one_loss_weights \
+        --prune_max_iter $prune_max_iter \
+        --far_thresh $far_thresh \
+        --bg_filtering $bg_filtering
+#done

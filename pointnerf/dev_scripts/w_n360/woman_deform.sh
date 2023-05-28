@@ -2,6 +2,7 @@
 nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='woman_cuda'
+ray_bend=1
 
 resume_iter=190000 # 20000
 
@@ -99,6 +100,7 @@ split="train"
 cd run
 
 python3 deform.py \
+        --ray_bend $ray_bend \
         --experiment $name \
         --scan $scan \
         --data_root $data_root \

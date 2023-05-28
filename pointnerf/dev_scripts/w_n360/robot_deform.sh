@@ -7,6 +7,7 @@ resume_iter=190000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
 scan="robot"
+ray_bend=1
 
 normview=0
 bgmodel="no" #"plane"
@@ -100,6 +101,7 @@ ray_bend=1
 cd run
 
 python3 deform.py \
+        --ray_bend $ray_bend \
         --experiment $name \
         --scan $scan \
         --data_root $data_root \
