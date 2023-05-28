@@ -43,14 +43,14 @@ for i, imagename in enumerate(os.listdir(image_dir)):
         file_path = imagename.split(".")
         image_id = int(file_path[0])
         print(image_id - first_id)
-        shutil.move(os.path.join(image_dir, imagename), os.path.join(image_save_dir, "{:04d}".format(image_id - first_id) + '.' + file_path[1]))
+        shutil.copy(os.path.join(image_dir, imagename), os.path.join(image_save_dir, "{:04d}".format(image_id - first_id) + '.' + file_path[1]))
 
 # change keypoint name 
 for i, objname in enumerate(os.listdir(keypoint_dir)):
     if objname.endswith(".mtl") or objname.endswith(".obj"):
         file_path = objname.split(".")
         obj_id = int(file_path[0])
-        shutil.move(os.path.join(keypoint_dir, objname), os.path.join(keypoint_save_dir, str(obj_id - first_id) + '.' + file_path[1]))
+        shutil.copy(os.path.join(keypoint_dir, objname), os.path.join(keypoint_save_dir, str(obj_id - first_id) + '.' + file_path[1]))
 
 # change src_id name
 with open(src_dir, 'r') as f:
