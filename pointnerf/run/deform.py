@@ -153,6 +153,7 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
         keypoint_dir = os.path.join(opt.data_root, opt.scan, "keypoint")
         # target keypoint
         vtrg = pcu.load_mesh_v(f"{keypoint_dir}/{i}.obj")
+        vtrg_total_num = vtrg.shape[0]
         if kp_idxs is not None:
             # sample keypoint
             vtrg = vtrg[kp_idxs]
@@ -164,7 +165,7 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
         xpred = torch.stack([xsrc_x, -xsrc_z, xsrc_y], dim=-1)
         
         # print
-        print(fmt.RED + f'Deform image {i}, Total keypoint {vtrg.shape[0]}, Total pointcloud {xsrc.shape[0]}' + fmt.END)
+        print(fmt.RED + f'Deform image {i}, Used keypoint {vtrg.shape[0]}, Total keypoint {vtrg_total_num}, Total pointcloud {xsrc.shape[0]}' + fmt.END)
 
         # breakpoint()
         with torch.no_grad():
@@ -315,7 +316,7 @@ def main():
             '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' +
             fmt.END)
     # initialize deformation
-    xsrc, vsrc, vrgb, kp_idxs = init_deformation(opt)
+    xsrc, vsrc, vrgb, kp_idxs = init_deformation(opt, 0.1)
     raybender = RayBender(xsrc, 8)
     visualizer = Visualizer(opt)
     train_dataset = create_dataset(opt)
@@ -387,7 +388,7 @@ def sample_kp(kp, num=None):    # num: sample number or ratio
         if num > 1:
             kp_idxs = np.random.choice(kp.shape[0], num).tolist()
         elif num <= 1:
-            kp_idxs = np.random.choice(kp.shape[0], int(kp.shape[0] * ratio)).tolist()
+            kp_idxs = np.random.choice(kp.shape[0], int(kp.shape[0] * num)).tolist()
         else:
             print("[sample_kp]: not implemented")
     else:
