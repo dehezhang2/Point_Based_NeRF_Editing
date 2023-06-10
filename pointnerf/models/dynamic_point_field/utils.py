@@ -75,6 +75,10 @@ def get_camera(dist=1, elev=0, azim=0):
 
 
 def render_points(x, xf, dist=1, elev=0, azim=0, image_size=512, radius=0.01, points_per_pixel=50, scale_val=1.0):
+    if not torch.is_tensor(x):
+        x = torch.tensor(x, dtype=torch.float)
+    if not torch.is_tensor(xf):
+        xf = torch.tensor(xf, dtype=torch.float)
     x = x.to(device)
     xf = xf.to(device)
     renderer = get_point_renderer(image_size=image_size, radius=radius, points_per_pixel=points_per_pixel)

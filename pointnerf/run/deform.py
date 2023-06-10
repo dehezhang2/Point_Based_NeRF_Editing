@@ -13,6 +13,8 @@ from models import create_model
 from models.mvs.mvs_points_model import MvsPointsModel
 from models.mvs import mvs_utils, filter_utils
 from models.dynamic_point_field.model import deform_cloud, Siren, RayBender
+from models.dynamic_point_field.utils import *
+import matplotlib.pyplot as plt
 from pprint import pprint
 from utils.visualizer import Visualizer
 from utils import format as fmt
@@ -157,6 +159,26 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
         if kp_idxs is not None:
             # sample keypoint
             vtrg = vtrg[kp_idxs]
+        # draw pcd
+        draw_pcd = True
+        if draw_pcd and opt.sample_num > 0:
+            # define colors for verts
+            vrgb = torch.zeros([len(vtrg), 4]).to(device)
+            vrgb[:, 1] = 1
+            vrgb[:, 2] = 1
+            vrgb[:, 3] = 1
+            yvsrc = render_points(vsrc, vrgb, azim=0, radius=0.005, image_size=1024).detach().cpu().numpy()
+            yvtrg = render_points(vtrg, vrgb, azim=0, radius=0.005, image_size=1024).detach().cpu().numpy()
+            plt.axis('off')
+            plt.imshow(yvsrc)
+            plt.savefig(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vsrc.png"))
+            plt.close()
+            plt.axis('off')
+            plt.imshow(yvtrg)
+            plt.savefig(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vtrg.png"))
+            plt.close()
+            # cv2.imwrite(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vsrc.png"), yvsrc)
+            # cv2.imwrite(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vtrg.png"), yvtrg)
         xpred = deform(xsrc, vsrc, vtrg)
         if opt.ray_bend == 1:
             model.raybender.set_trg(xpred)
@@ -393,7 +415,6 @@ def sample_kp(kp, num=-1):    # num: sample number or ratio
         kp_idxs = None
 
     return kp_idxs
-
 
 def init_deformation(opt):
     # get vsrc_idx
