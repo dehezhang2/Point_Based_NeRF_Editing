@@ -316,7 +316,7 @@ def main():
             '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' +
             fmt.END)
     # initialize deformation
-    xsrc, vsrc, vrgb, kp_idxs = init_deformation(opt, 0.1)
+    xsrc, vsrc, vrgb, kp_idxs = init_deformation(opt)
     raybender = RayBender(xsrc, 8)
     visualizer = Visualizer(opt)
     train_dataset = create_dataset(opt)
@@ -383,21 +383,19 @@ def main():
     model.opt.no_loss = 1
     test(xsrc, vsrc, kp_idxs, model, test_dataset, Visualizer(test_opt), test_opt, test_bg_info, test_steps=resume_iter)
 
-def sample_kp(kp, num=None):    # num: sample number or ratio
-    if num is not None:
+def sample_kp(kp, num=-1):    # num: sample number or ratio
+    if num > 0:
         if num > 1:
             kp_idxs = np.random.choice(kp.shape[0], num).tolist()
         elif num <= 1:
             kp_idxs = np.random.choice(kp.shape[0], int(kp.shape[0] * num)).tolist()
-        else:
-            print("[sample_kp]: not implemented")
     else:
         kp_idxs = None
 
     return kp_idxs
 
 
-def init_deformation(opt, sample_num=None):
+def init_deformation(opt):
     # get vsrc_idx
     vsrc_idx = int(np.loadtxt(os.path.join(opt.data_root, opt.scan, "src_id.txt")))
     # load static NeRF pointcloud
@@ -408,10 +406,10 @@ def init_deformation(opt, sample_num=None):
     vsrc = pcu.load_mesh_v(f"{keypoint_dir}/{vsrc_idx}.obj")
     print(f"vsrc size: {vsrc.shape[0]}")
     xsrc, csrc = point_cloud[:, :3], point_cloud[:, 3:]
-    if sample_num is not None:
-        print(f"sample num: {sample_num}")
+    if opt.sample_num > 0:
+        print(f"sample num: {opt.sample_num}")
         # sample keypoint
-        kp_idxs = sample_kp(vsrc, sample_num)
+        kp_idxs = sample_kp(vsrc, opt.sample_num)
         vsrc = vsrc[kp_idxs]
     else:
         kp_idxs = None

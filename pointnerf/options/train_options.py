@@ -123,5 +123,9 @@ class TrainOptions(BaseOptions):
                             type=int,
                             default=0,
                             help='activate ray bending at deformation')
+        parser.add_argument('--sample_num',
+                            type=float,
+                            default=-1,
+                            help='sample keypoints at deformation')
 
         return parser
