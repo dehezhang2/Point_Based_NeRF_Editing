@@ -65,7 +65,7 @@ We trained [MVSNet](https://github.com/xy-guo/MVSNet_pytorch) on DTU. You can Do
 pointnerf
 ├── checkpoints
 │   ├── init
-		├── MVSNet
+    ├── MVSNet
     ├── nerfsynth
 ```
 
