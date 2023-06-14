@@ -93,6 +93,7 @@ In each scene, we provide points and weights at 200K steps `200000_net_ray_march
 
 <details>
   <summary>deformation scripts</summary>
+	
 ```
     bash dev_scripts/w_n360/dragon_deform.sh
     bash dev_scripts/w_n360/gangnam_deform.sh
@@ -107,7 +108,7 @@ In each scene, we provide points and weights at 200K steps `200000_net_ray_march
 
 </details>
 
-* *Notes on the configuration in* `deform.sh`
+*Notes on the configuration in* `deform.sh`
 
   ```
   ray_bend=0 # 0: no bending; 1: use ray bending
