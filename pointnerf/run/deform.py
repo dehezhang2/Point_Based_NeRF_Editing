@@ -164,18 +164,25 @@ def test(xsrc, vsrc, kp_idxs, model, dataset, visualizer, opt, bg_info, test_ste
         if draw_pcd and opt.sample_num > 0:
             # define colors for verts
             vrgb = torch.zeros([len(vtrg), 4]).to(device)
-            vrgb[:, 1] = 1
-            vrgb[:, 2] = 1
+            vrgb[:, 0] = 0
+            vrgb[:, 1] = 0.5
+            vrgb[:, 2] = 0
             vrgb[:, 3] = 1
-            yvsrc = render_points(vsrc, vrgb, azim=0, radius=0.005, image_size=1024).detach().cpu().numpy()
-            yvtrg = render_points(vtrg, vrgb, azim=0, radius=0.005, image_size=1024).detach().cpu().numpy()
+            if vtrg.shape[0] < 50:
+                radius = 0.02
+            elif vtrg.shape[0] > 500:
+                radius = 0.005
+            else:
+                radius = 0.01
+            yvsrc = render_points(vsrc, vrgb, azim=0, radius=radius, image_size=1024).detach().cpu().numpy()
+            yvtrg = render_points(vtrg, vrgb, azim=0, radius=radius, image_size=1024).detach().cpu().numpy()
             plt.axis('off')
             plt.imshow(yvsrc)
-            plt.savefig(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vsrc.png"))
+            plt.savefig(os.path.join(opt.checkpoints_dir + opt.name, f"{i}_{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vsrc.png"))
             plt.close()
             plt.axis('off')
             plt.imshow(yvtrg)
-            plt.savefig(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vtrg.png"))
+            plt.savefig(os.path.join(opt.checkpoints_dir + opt.name, f"{i}_{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vtrg.png"))
             plt.close()
             # cv2.imwrite(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vsrc.png"), yvsrc)
             # cv2.imwrite(os.path.join(opt.checkpoints_dir + opt.name, f"{vtrg.shape[0]}_{vtrg_total_num}_{opt.sample_num}_vtrg.png"), yvtrg)
@@ -408,7 +415,7 @@ def main():
 def sample_kp(kp, num=-1):    # num: sample number or ratio
     if num > 0:
         if num > 1:
-            kp_idxs = np.random.choice(kp.shape[0], num).tolist()
+            kp_idxs = np.random.choice(kp.shape[0], int(num)).tolist()
         elif num <= 1:
             kp_idxs = np.random.choice(kp.shape[0], int(kp.shape[0] * num)).tolist()
     else:

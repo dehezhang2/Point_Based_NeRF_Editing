@@ -3,10 +3,10 @@ nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='gangnam_cuda'
 
-resume_iter=190000 # 20000
+resume_iter=200000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
-scan="gangnam"
+scan="gangnam_crop"
 ray_bend=1
 
 normview=0

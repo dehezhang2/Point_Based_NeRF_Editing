@@ -3,7 +3,7 @@ nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='spiderman_cuda'
 
-resume_iter=190000 # 20000
+resume_iter=180000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
 scan="spiderman"

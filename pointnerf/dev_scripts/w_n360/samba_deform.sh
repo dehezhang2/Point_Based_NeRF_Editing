@@ -3,11 +3,11 @@ nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='samba_cuda'
 
-resume_iter=190000 # 20000
+resume_iter=200000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
-scan="samba"
-ray_bend=1
+scan="samba_crop"
+ray_bend=0
 
 normview=0
 bgmodel="no" #"plane"

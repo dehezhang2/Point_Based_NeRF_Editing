@@ -3,10 +3,10 @@ nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='turtle_cuda'
 
-resume_iter=200000 # 20000
+resume_iter=160000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
-scan="turtle"
+scan="turtle_rotate"
 
 normview=0
 bgmodel="no" #"plane"
@@ -31,7 +31,7 @@ vsize=" 0.004 0.004 0.004 " #" 0.005 0.005 0.005 "
 wcoord_query=-1
 z_depth_dim=400
 max_o=410000 #2000000
-ranges="-2 -2 -2 2 2 2"
+ranges="-3 -3 -3 3 3 3"
 SR=80
 K=8
 P=12 #120

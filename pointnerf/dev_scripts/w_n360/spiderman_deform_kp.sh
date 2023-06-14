@@ -8,8 +8,7 @@ resume_iter=200000 # 20000
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
 scan="spiderman_kp"
 ray_bend=0
-sample_num=0.1
-
+sample_num=300
 normview=0
 bgmodel="no" #"plane"
 trgt_id=0

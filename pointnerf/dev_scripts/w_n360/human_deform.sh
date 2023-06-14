@@ -3,10 +3,10 @@ nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='human_cuda'
 
-resume_iter=190000 # 20000
+resume_iter=80000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
-scan="human"
+scan="human_crop"
 ray_bend=1
 
 normview=0

@@ -3,11 +3,11 @@ nrCheckpoint="../checkpoints"
 nrDataRoot="../data_src"
 name='robot_cuda'
 
-resume_iter=190000 # 20000
+resume_iter=180000 # 20000
 
 data_root="${nrDataRoot}/nerf/nerf_synthetic/"
-scan="robot"
-ray_bend=1
+scan="robot_crop"
+ray_bend=0
 
 normview=0
 bgmodel="no" #"plane"
@@ -97,7 +97,7 @@ test_color_loss_items='coarse_raycolor ray_miss_coarse_raycolor ray_masked_coars
 
 bg_color="white" #"0.0,0.0,0.0,1.0,1.0,1.0"
 split="train"
-ray_bend=1
+ray_bend=0
 cd run
 
 python3 deform.py \

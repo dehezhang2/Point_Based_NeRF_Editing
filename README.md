@@ -6,7 +6,7 @@ This is a repository containing the code of the course project of digital human.
 - Mirror: Python 3.8 (ubuntu20.04) Cuda 11.8
 - Install point-NeRF environment
     ```
-    conda env create -f environment_autodl.yml
+    conda env create -f environment.yml
     ```
 - Install pytorch3d
     ```
