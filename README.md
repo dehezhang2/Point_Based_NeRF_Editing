@@ -1,6 +1,7 @@
 # Point-Based Radiance Fields for Controllable Human Motion Synthesis
 
 Authors:[Deheng Zhang*](https://github.com/dehezhang2), [Haitao Yu*](https://github.com/sputnik524), [Peiyuan Xie*](https://github.com/xpy1009), [Tianyi Zhang*](https://github.com/TianyiZhang-arc)
+
 This is a repository containing the code of the course project of digital human. Our topic is NeRF editing based on point deformation.
 
 ## Overview
