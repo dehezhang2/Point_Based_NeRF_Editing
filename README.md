@@ -51,7 +51,7 @@ pointnerf
 │   ├── nerf
     │   │   │──nerf_synthetic
 ```
-## Point Initialization / Generalization:
+## Initialization and Optimization:
 
 ### Download pre-trained MVSNet checkpoints:
 
