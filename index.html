@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Point-Based Radiance Fields for Controllable Motion Synthesis</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap-4.4.1.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,800italic,400,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/project.css" media="screen" />
+    <link rel="stylesheet" type="text/css" media="screen" href="css/iconize.css" />
+    <script src="js/google-code-prettify/prettify.js"></script> -->
+  </head>
+
+  <!-- cover -->
+  <section>
+    <div class="jumbotron text-center mt-0">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2>Point-Based Radiance Fields for Controllable Motion Synthesis
+            <hr>
+            <h6>
+                <a href="https://dehezhang2.github.io/" target="_blank">Deheng Zhang</a><sup>*1</sup>,
+                <a href="https://sputnik524.github.io/" target="_blank">Haitao Yu</a><sup>*1</sup>,
+                <a href="https://github.com/xpy1009" target="_blank">Peiyuan Xie</a><sup>*1</sup>,
+                <a href="https://github.com/TianyiZhang-arc" target="_blank">Tianyi Zhang</a><sup>*1</sup>
+            </h6>
+            <p>
+              (* means equal contribution)
+            </p>
+            <p>
+                <sup>1</sup>ETH Zürich&nbsp;&nbsp;
+            </p>
+
+            <div class="row justify-content-center">
+              <div class="column">
+                  <p class="mb-5"><a class="btn btn-large btn-light" href="" role="button"  target="_blank">
+                    <i class="fa fa-file"></i> Paper</a> </p>
+              </div>
+              <div class="column">
+                  <p class="mb-5"><a class="btn btn-large btn-light" href="https://github.com/dehezhang2/Point_Based_NeRF_Editing" role="button"  target="_blank">
+                    <i class="fa fa-github-alt"></i> Code </a> </p>
+              </div>
+              <div class="column">
+                  <p class="mb-5"><a class="btn btn-large btn-light" href="https://polybox.ethz.ch/index.php/s/L1hEW3abDCQkeOm" role="button"  target="_blank">
+                    <i class="fa fa-database"></i> Model & Dataset </a> </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- abstract -->
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+          <h3>Abstract</h3>
+            <hr style="margin-top:0px">
+            <h6 style="color:#8899a5"> Pipeline of our controllable point radiance field. </h6>
+<!--            <div align="center"> For an unseen objects, we can simply take. </div>-->
+
+            <div class="row" style="margin-bottom:5px">
+              <div class="col" style="text-align:center">
+                <img class="thumbnail" src="image/pipeline.gif" style="width:100%; margin-bottom:20px">
+              </div>
+
+            </div>
+			<br>
+
+          <p class="text-left">
+            We propose a novel controllable motion synthesis method for fine-level deformation based on static point-based radiance fields. Although previous editable neural radiance field methods can generate impressive results on novel-view synthesis and allow naive deformation, few algorithms can achieve complex 3D human editing such as forward kinematics. Our method exploits the explicit point cloud to train the static 3D scene and apply the deformation by encoding the point cloud translation using a deformation MLP. To make sure the rendering result is consistent with the canonical space training, we estimate the local rotation using SVD and interpolate the per-point rotation to the query view direction of the pre-trained radiance field. Extensive experiments show that our approach can significantly outperform the state-of-the-art on fine-level complex deformation which can be generalized to other 3D characters besides humans
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br>
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+            <h2>Human Motion Synthesis</h2>
+            <hr style="margin-top:0px">
+            <video width="80%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">
+                <source src="video/geom_compare_compressed.mp4" type="video/mp4">
+            </video>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br>
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+            <h2>Character Motion Synthesis</h2>
+            <hr style="margin-top:0px">
+            <video width="80%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">
+                <source src="video/relight_compare_compressed.mp4" type="video/mp4">
+            </video>
+
+          <p class="text-center">
+            In comparison with: MII [1] NeILF [2] NvDiffRecMC [3]
+          </p>
+          <p class="text-left">
+            [1] Modeling Indirect Illumination for Inverse Rendering. CVPR 2022. <br>
+            [2] NeiLF: Neural incident light field for physically-based material estimation. ECCV 2022. <br>
+            [3] Shape, Light, and Material Decomposition from Images using Monte Carlo Rendering and Denoising. NeurIPS 2022. <br>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br>
+<!--  <section>-->
+<!--    <div class="container">-->
+<!--      <div class="row">-->
+<!--        <div class="col-12 text-center">-->
+<!--            <h2>Results with 10k per-scene training steps (~40min)</h2>-->
+<!--            <hr style="margin-top:0px">-->
+<!--            <video width="100%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">-->
+<!--                <source src="video/nerf_syn_ft_comparison.mp4" type="video/mp4">-->
+<!--            </video>-->
+<!--            <video width="100%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">-->
+<!--                <source src="video/nerf_syn_ft.mp4" type="video/mp4">-->
+<!--            </video>-->
+<!--            <video width="100%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">-->
+<!--                <source src="video/dtu_ft.mp4" type="video/mp4">-->
+<!--            </video>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </section>-->
+<!--  <br>-->
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+            <h2>More Shape Reconstruction</h2>
+            <hr style="margin-top:0px">
+            <video width="80%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">
+                <source src="video/geom_results_compressed.mp4" type="video/mp4">
+            </video>
+
+          <p class="text-left">
+
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br>
+
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+            <h2>More Relighting</h2>
+            <hr style="margin-top:0px">
+            <video width="80%" playsinline="" autoplay="autoplay" loop="loop" preload="" muted="">
+                <source src="video/relight_results_compressed.mp4" type="video/mp4">
+            </video>
+
+          <p class="text-left">
+
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br>
+
+  <!-- citing -->
+  <div class="container">
+    <div class="row ">
+      <div class="col-12">
+          <h3>Citation</h3>
+          <hr style="margin-top:0px">
+              <pre style="background-color: #e9eeef;padding: 1.25em 1.5em">
+<code>@inproceedings{liu2023nero,
+  title={Point-Based Radiance Fields for Controllable Motion Synthesis},
+  author={Liu, Yuan and Wang, Peng and Lin, Cheng and Long, Xiaoxiao and Wang, Jiepeng and Liu, Lingjie and Komura, Taku and Wang, Wenping},
+  year={2023}
+}</code></pre>
+          <hr>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center" style="margin-bottom:10px">
+      Thanks to <a href="https://lioryariv.github.io/" target="_blank">Lior Yariv</a> for the website template.
+  </footer>
+
+</body>
+</html>
