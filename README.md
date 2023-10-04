@@ -1,8 +1,10 @@
 # Point-Based Radiance Fields for Controllable Human Motion Synthesis
 
+## [Project Page](https://dehezhang2.github.io/Point_Based_NeRF_Editing/)
+
 Authors:[Deheng Zhang*](https://github.com/dehezhang2), [Haitao Yu*](https://github.com/sputnik524), [Peiyuan Xie*](https://github.com/xpy1009), [Tianyi Zhang*](https://github.com/TianyiZhang-arc)
 
-This is a repository containing the code of the course project of digital human. Our topic is NeRF editing based on point deformation.
+This is a repository containing the official implementation of ***Point-Based Radiance Fields for Controllable Human Motion Synthesis***. 
 
 ## Overview
 
@@ -51,6 +53,8 @@ pointnerf
 │   ├── nerf
     │   │   │──nerf_synthetic
 ```
+Alternatively, you can follow the instruction in [PointNeRF-Assistant](https://github.com/dehezhang2/PointNeRF-Assistant) to create your own dataset, the data format should be the same as `nerf_sythetic` dataset. 
+
 ## Initialization and Optimization:
 
 ### Download pre-trained MVSNet checkpoints:
@@ -93,7 +97,7 @@ In each scene, we provide points and weights at 200K steps `200000_net_ray_march
 
 <details>
   <summary>deformation scripts</summary>
-	
+
 ```
     bash dev_scripts/w_n360/dragon_deform.sh
     bash dev_scripts/w_n360/gangnam_deform.sh
@@ -117,7 +121,7 @@ In each scene, we provide points and weights at 200K steps `200000_net_ray_march
 
 ## Acknowledgement
 
-Our repo is developed based on [MVSNet](https://github.com/YoYo000/MVSNet),  [PointNeRF](https://github.com/Xharlie/pointnerf), DPF. Please also consider citing the corresponding papers. We thank our supervisor [**Sergey Prokudin**](https://inf.ethz.ch/people/people-atoz/person-detail.MjgzODM4.TGlzdC8zMDQsLTIxNDE4MTU0NjA=.html) from [Computer Vision and Learning Group ETH Zurich](https://vlg.inf.ethz.ch/) for the help and tons of useful advice for this project.
+Our repo is developed based on [MVSNet](https://github.com/YoYo000/MVSNet),  [PointNeRF](https://github.com/Xharlie/pointnerf), [DPF](https://github.com/sergeyprokudin/dpf). Please also consider citing the corresponding papers. We thank our supervisor [**Dr. Sergey Prokudin**](https://inf.ethz.ch/people/people-atoz/person-detail.MjgzODM4.TGlzdC8zMDQsLTIxNDE4MTU0NjA=.html) from [Computer Vision and Learning Group ETH Zurich](https://vlg.inf.ethz.ch/) for the help and tons of useful advice for this project.
 
 ## LICENSE
 
