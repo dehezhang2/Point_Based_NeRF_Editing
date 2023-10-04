@@ -1,4 +1,4 @@
-# Point-Based Radiance Fields for Controllable Human Motion Synthesis
+# Point-Based Radiance Fields for Controllable Motion Synthesis
 
 Authors:[Deheng Zhang*](https://github.com/dehezhang2), [Haitao Yu*](https://github.com/sputnik524), [Peiyuan Xie*](https://github.com/xpy1009), [Tianyi Zhang*](https://github.com/TianyiZhang-arc)
 
