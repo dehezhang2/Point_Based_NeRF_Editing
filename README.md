@@ -1,6 +1,6 @@
 # Point-Based Radiance Fields for Controllable Human Motion Synthesis
 
-## [Project Page](https://dehezhang2.github.io/Point_Based_NeRF_Editing/)
+## [Paper](https://arxiv.org/abs/2310.03375)|[Project Page](https://dehezhang2.github.io/Point_Based_NeRF_Editing/)
 
 Authors:[Deheng Zhang*](https://github.com/dehezhang2), [Haitao Yu*](https://github.com/sputnik524), [Peiyuan Xie*](https://github.com/xpy1009), [Tianyi Zhang*](https://github.com/TianyiZhang-arc)
 
