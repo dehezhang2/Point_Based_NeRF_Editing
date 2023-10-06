@@ -118,7 +118,15 @@ In each scene, we provide points and weights at 200K steps `200000_net_ray_march
   ray_bend=0 # 0: no bending; 1: use ray bending
   sample_num -1 # -1: use whole set of keypoints; 0~1: ratio from the original keypoint; >1: number of keypoints
   ```
-
+## Reference
+```
+@article{zhang2023accessible,
+  title={Accessible Robot Control in Mixed Reality},
+  author={Zhang, Ganlin and Zhang, Deheng and Duan, Longteng and Han, Guo},
+  journal={arXiv preprint arXiv:2306.02393},
+  year={2023}
+}
+```
 ## Acknowledgement
 
 Our repo is developed based on [MVSNet](https://github.com/YoYo000/MVSNet),  [PointNeRF](https://github.com/Xharlie/pointnerf), [DPF](https://github.com/sergeyprokudin/dpf). Please also consider citing the corresponding papers. We thank our supervisor [**Dr. Sergey Prokudin**](https://inf.ethz.ch/people/people-atoz/person-detail.MjgzODM4.TGlzdC8zMDQsLTIxNDE4MTU0NjA=.html) from [Computer Vision and Learning Group ETH Zurich](https://vlg.inf.ethz.ch/) for the help and tons of useful advice for this project.
