@@ -120,11 +120,13 @@ In each scene, we provide points and weights at 200K steps `200000_net_ray_march
   ```
 ## Reference
 ```
-@article{zhang2023accessible,
-  title={Accessible Robot Control in Mixed Reality},
-  author={Zhang, Ganlin and Zhang, Deheng and Duan, Longteng and Han, Guo},
-  journal={arXiv preprint arXiv:2306.02393},
-  year={2023}
+@misc{yu2023pointbased,
+      title={Point-Based Radiance Fields for Controllable Human Motion Synthesis}, 
+      author={Haitao Yu and Deheng Zhang and Peiyuan Xie and Tianyi Zhang},
+      year={2023},
+      eprint={2310.03375},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 ```
 ## Acknowledgement
